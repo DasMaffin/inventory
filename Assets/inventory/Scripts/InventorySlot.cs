@@ -31,5 +31,11 @@ namespace Maffin.InvetorySystem.Slots
             }
         }
         public uint MaxAmount => item.StackSize;
+
+        public InventorySlot(Item item, uint ownedAmount)
+        {
+            this.item = item;
+            this.ownedAmount = ownedAmount;
+        }
     }
 }

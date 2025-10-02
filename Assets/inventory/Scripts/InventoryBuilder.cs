@@ -62,6 +62,10 @@ namespace Maffin.InvetorySystem.Builders
         {
             this.capacity = capacity;
             this.slots = new InventorySlot[capacity];
+            for(int i = 0; i < capacity; i++)
+            {
+                this.slots[i] = new InventorySlot(null, 0);
+            }
             return this;
         }
 
