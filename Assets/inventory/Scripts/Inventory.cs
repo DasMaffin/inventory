@@ -1,66 +1,102 @@
-using System;
 using UnityEngine;
+using Maffin.InvetorySystem.Slots;
+using Maffin.InvetorySystem.Items;
+using Maffin.InvetorySystem.Interfaces;
+using System;
+using System.Linq;
 
-/// <summary>
-/// Inventory factory and builder. Use Inventory.Create() to create a new inventory.
-/// </summary>
-public class Inventory
+namespace Maffin.InvetorySystem.Inventories
 {
-    private GameObject
-        owner;    // The owner of the inventory.
-    private uint
-        capacity = 0;    // How many slots in the inventory.
-    private bool
-        canOpen = true;
-    private InventorySlot[]
-        slots;    // The slots in the inventory.
-
-    private Inventory() { }
-
-    /// <summary>
-    /// Creates a new inventory instance.
-    /// </summary>
-    /// <returns>Returns the new inventory instance.</returns>
-    public static Inventory Create()
+    public class Inventory : IInventory
     {
-        return new Inventory();
-    }
+        private GameObject
+            owner;    // The owner of the inventory.
+        private uint
+            capacity = 0;    // How many slots in the inventory.
+        private bool
+            canOpen = true;
+        private InventorySlot[]
+            slots;    // The slots in the inventory.
 
-    /// <summary>
-    /// Sets the owner of the inventory. This is usually the player or entity that holds the inventory.
-    /// </summary>
-    /// <param name="owner">The object owning the inventory.</param>
-    public Inventory SetOwner(GameObject owner)
-    {
-        if(owner == null)
+        internal Inventory(GameObject owner, uint capacity, bool canOpen, InventorySlot[] slots)
         {
-            Debug.LogWarning("Inventory owner is null. This is probably unintended and should be fixed.\nIf this is intended remove this method from the inventory.");
-            return this;
+            this.owner = owner;
+            this.capacity = capacity;
+            this.canOpen = canOpen;
+            this.slots = slots;
         }
-        this.owner = owner;
-        return this;
-    }
 
-    /// <summary>
-    /// The amount of slots in the inventory.
-    /// </summary>
-    /// <param name="capacity">The amount of slots in the inventory.</param>
-    public Inventory SetCapacity(uint capacity)
-    {
-        this.capacity = capacity;
-        this.slots = new InventorySlot[capacity];
-        return this;
-    }
+        public uint AddItem(Item item, uint amount)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item), "Item does not exist!");
+            
+            while(amount > 0)
+            {
+                // Find a slot that either has the same item, and space, or an empty slot. Prioritize existing stacks.
+                // Improve this by indexing slots by item type wiht a Dictionary. Would take time from O(n) to O(1). However, only necessary for large inventories and I am lazy.
+                InventorySlot slot = 
+                    slots.FirstOrDefault(s => s.Item == item && s.OwnedAmount < s.MaxAmount) ??
+                    slots.FirstOrDefault(s => s.Item == null);
+                if(slot == null) break; // Inventory full
+                amount = AddItem(slot, item, amount);
+            }
 
-    /// <summary>
-    /// Whether or not the inventory can be opened. Default is true.
-    /// If true the inventory can be opened by clicking on its owner.
-    /// </summary>
-    /// <param name="canOpen"></param>
-    /// <returns></returns>
-    public Inventory SetCanOpen(bool canOpen)
-    {
-        this.canOpen = canOpen;
-        return this;
+            return amount;
+        }
+
+        public uint AddItem(InventorySlot slot, Item item, uint amount)
+        {
+            if (
+                slot == null ||
+                item == null ||
+                (slot.Item != null && slot.Item != item))
+                return amount;
+
+            slot.Item = item;
+            uint freeSpace = slot.MaxAmount - slot.OwnedAmount;
+            if (amount > freeSpace)
+            {
+                amount -= freeSpace;
+                slot.OwnedAmount = slot.MaxAmount;
+            }
+            else
+            {
+                slot.OwnedAmount += amount;
+                return 0;
+            }
+            return amount;
+        }
+
+        public bool RemoveItem(Item item, uint amount)
+        {
+            if (
+                item == null ||
+                TotalInInventory(item) < amount)
+                return false;
+
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveItem(InventorySlot slot, uint amount)
+        {
+            if(
+                slot == null || 
+                slot.Item == null ||
+                slot.OwnedAmount < amount)
+                return false;
+
+            throw new NotImplementedException();
+        }
+
+        public uint TotalInInventory(Item item)
+        {
+            uint counter = 0;
+            foreach (InventorySlot slot in slots)
+            {
+                if (slot.Item == item) counter += slot.OwnedAmount;
+            }
+            return counter;
+        }
     }
 }

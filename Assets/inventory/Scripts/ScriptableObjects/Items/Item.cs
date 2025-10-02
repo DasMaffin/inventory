@@ -1,8 +1,12 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
-public class Item : ScriptableObject
+namespace Maffin.InvetorySystem.Items
 {
-    public string itemName;
-    [TextArea] public string description;
+    [CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
+    public class Item : ScriptableObject
+    {
+        public string itemName;
+        [TextArea] public string description;
+        public uint StackSize;
+    }
 }
