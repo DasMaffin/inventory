@@ -4,6 +4,7 @@ using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Interfaces;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Maffin.InvetorySystem.Inventories
 {
@@ -17,6 +18,26 @@ namespace Maffin.InvetorySystem.Inventories
             canOpen = true;
         private InventorySlot[]
             slots;    // The slots in the inventory.
+
+        private static string ItemsPath;
+        private static List<Item> allItems = new List<Item>();
+        public static List<Item> AllItems
+        {
+            get
+            {
+                if (allItems.Count == 0)
+                {
+                    allItems.AddRange(Resources.LoadAll<Item>(ItemsPath));
+                }
+                return allItems;
+            }
+        }
+
+        public static void SetItemsPath(string path)
+        {
+            ItemsPath = path;
+            allItems.Clear();
+        }
 
         internal Inventory(GameObject owner, uint capacity, bool canOpen, InventorySlot[] slots)
         {
