@@ -24,7 +24,7 @@ namespace Maffin.InvetorySystem.Slots
             get => ownedAmount;
             set
             {
-                if (value > item.StackSize)
+                if (item != null && value > item.StackSize)
                     ownedAmount = item.StackSize;
                 else
                     ownedAmount = value;

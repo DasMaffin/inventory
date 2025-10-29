@@ -1,10 +1,12 @@
-using UnityEngine;
-using Maffin.InvetorySystem.Slots;
-using Maffin.InvetorySystem.Items;
+using Codice.Client.BaseCommands.WkStatus.Printers;
 using Maffin.InvetorySystem.Interfaces;
+using Maffin.InvetorySystem.Items;
+using Maffin.InvetorySystem.Slots;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Graphs;
+using UnityEngine;
 
 namespace Maffin.InvetorySystem.Inventories
 {
@@ -16,11 +18,14 @@ namespace Maffin.InvetorySystem.Inventories
             capacity = 0;    // How many slots in the inventory.
         private bool
             canOpen = true;
-        private InventorySlot[]
+        public InventorySlot[]
             slots;    // The slots in the inventory.
 
         private static string ItemsPath;
         private static List<Item> allItems = new List<Item>();
+
+        public event Action<InventorySlot> OnInventoryChanged;
+
         public static List<Item> AllItems
         {
             get
@@ -62,7 +67,6 @@ namespace Maffin.InvetorySystem.Inventories
                 if(slot == null) break; // Inventory full
                 amount = AddItem(slot, item, amount);
             }
-
             return amount;
         }
 
@@ -84,30 +88,50 @@ namespace Maffin.InvetorySystem.Inventories
             else
             {
                 slot.OwnedAmount += amount;
+                OnInventoryChanged?.Invoke(slot);
                 return 0;
             }
+            OnInventoryChanged?.Invoke(slot);
             return amount;
         }
 
-        public bool RemoveItem(Item item, uint amount)
+        public uint RemoveItem(Item item, uint amount)
         {
             if (
                 item == null ||
                 TotalInInventory(item) < amount)
-                return false;
+                return amount;
 
-            throw new NotImplementedException();
+            while(amount > 0)
+            {
+                InventorySlot slot = slots.FirstOrDefault(s => s.Item == item);
+                if (slot == null) return amount;
+                amount = RemoveItem(slot, amount);
+            }
+            return amount;
         }
 
-        public bool RemoveItem(InventorySlot slot, uint amount)
+        public uint RemoveItem(InventorySlot slot, uint amount)
         {
-            if(
-                slot == null || 
-                slot.Item == null ||
-                slot.OwnedAmount < amount)
-                return false;
+            if (
+                slot == null ||
+                slot.Item == null)
+                return amount;
 
-            throw new NotImplementedException();
+            if(slot.OwnedAmount > amount)
+            {
+                slot.OwnedAmount -= amount;
+                OnInventoryChanged?.Invoke(slot);
+                return 0;
+            }
+            else
+            {
+                amount -= slot.OwnedAmount;
+                slot.Item = null;
+                slot.OwnedAmount = 0;
+                OnInventoryChanged?.Invoke(slot);
+                return amount;
+            }
         }
 
         public uint TotalInInventory(Item item)

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using UnityEngine;
 
 namespace Maffin.InvetorySystem.Items
@@ -7,6 +8,8 @@ namespace Maffin.InvetorySystem.Items
     {
         public string itemName;
         [TextArea] public string description;
+        [DefaultValue(10)]
         public uint StackSize;
+        public Sprite Icon;
     }
 }
