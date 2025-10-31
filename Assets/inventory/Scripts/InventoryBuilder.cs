@@ -19,7 +19,8 @@ namespace Maffin.InvetorySystem.Builders
         private uint
             capacity = 0;    // How many slots in the inventory.
         private bool
-            canOpen = true;
+            canOpen = true,
+            isLocalPlayerInventory = false;
         private InventorySlot[]
             slots;    // The slots in the inventory.
 
@@ -36,7 +37,7 @@ namespace Maffin.InvetorySystem.Builders
         /// <returns>Returns the new inventory instance.</returns>
         public Inventory Build()
         {
-            return new Inventory(owner, capacity, canOpen, slots);
+            return new Inventory(owner, capacity, canOpen, slots, isLocalPlayerInventory);
         }
 
         /// <summary>
@@ -51,6 +52,16 @@ namespace Maffin.InvetorySystem.Builders
                 return this;
             }
             this.owner = owner;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the ownership of local player.
+        /// </summary>
+        /// <returns></returns>
+        public InventoryBuilder SetLocalPlayer(bool value = true)
+        {
+            this.isLocalPlayerInventory = value;
             return this;
         }
 

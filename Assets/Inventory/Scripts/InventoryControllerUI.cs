@@ -21,6 +21,7 @@ public class InventoryControllerUI : MonoBehaviour
     public GameObject InventorySlotPrefab;
     public GameObject InventoryItemPrefab;
     public GameObject InventorySlotsArea;
+    public GameObject InventoryHotbarArea;
     public Inventory inventory;
     public Dictionary<InventorySlot, GameObject> SlotToGO = new Dictionary<InventorySlot, GameObject>();
     public Dictionary<GameObject, InventorySlot> GOToSlot = new Dictionary<GameObject, InventorySlot>();
@@ -40,7 +41,7 @@ public class InventoryControllerUI : MonoBehaviour
 
         for (int i = 0; i < inventory.slots.Length; i++)
         {
-            SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, InventorySlotsArea.transform));
+            SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, i < 10 ? InventoryHotbarArea.transform : InventorySlotsArea.transform));
             GOToSlot.Add(SlotToGO[inventory.slots[i]], inventory.slots[i]);
             if (inventory.slots[i].Item != null)
                 Inventory_OnInventoryChanged(inventory.slots[i]);

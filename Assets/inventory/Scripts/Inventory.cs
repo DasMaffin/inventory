@@ -2,6 +2,7 @@ using Codice.Client.BaseCommands.WkStatus.Printers;
 using Maffin.InvetorySystem.Interfaces;
 using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
+using PlasticPipe.PlasticProtocol.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +16,31 @@ namespace Maffin.InvetorySystem.Inventories
         private GameObject
             owner;    // The owner of the inventory.
         private uint
-            capacity = 0;    // How many slots in the inventory.
-        private bool
-            canOpen = true;
+            capacity = 0;
+        private int
+            hotbarSelectedIndex = 0;
+        public bool
+            canOpen = true,
+            isLocalPlayerInventory = false;
         public InventorySlot[]
             slots;    // The slots in the inventory.
+        private InventorySlot _selectedSlot;
+        private InventorySlot selectedSlot
+        {
+            get => _selectedSlot;
+            set
+            {
+                _selectedSlot = value;
+
+                OnSelectedSlotChanged?.Invoke(selectedSlot);
+            }
+        }
 
         private static string ItemsPath;
         private static List<Item> allItems = new List<Item>();
 
         public event Action<InventorySlot> OnInventoryChanged;
+        private event Action<InventorySlot> OnSelectedSlotChanged;
 
         public static List<Item> AllItems
         {
@@ -44,12 +60,14 @@ namespace Maffin.InvetorySystem.Inventories
             allItems.Clear();
         }
 
-        internal Inventory(GameObject owner, uint capacity, bool canOpen, InventorySlot[] slots)
+        internal Inventory(GameObject owner, uint capacity, bool canOpen, InventorySlot[] slots, bool _isLocalPlayerInventory)
         {
             this.owner = owner;
             this.capacity = capacity;
             this.canOpen = canOpen;
             this.slots = slots;
+            this.isLocalPlayerInventory = _isLocalPlayerInventory;
+            this.selectedSlot = this.slots[0];
         }
 
         public uint AddItem(Item item, uint amount)
@@ -145,6 +163,33 @@ namespace Maffin.InvetorySystem.Inventories
                 if (slot.Item == item) counter += slot.OwnedAmount;
             }
             return counter;
+        }
+
+        public InventorySlot HotbarChangeSelect(int value)
+        {
+            int newValue = hotbarSelectedIndex - value;
+            while (newValue < 0) newValue = 10 + newValue;
+            while (newValue > 9) newValue = newValue % 10;
+            hotbarSelectedIndex = newValue;
+            selectedSlot = slots[hotbarSelectedIndex];
+            return selectedSlot;
+        }
+
+        public InventorySlot HotbarSetSelect(int index)
+        {
+            selectedSlot = slots[index];
+            return selectedSlot;
+        }
+
+        public void SubscribeToOnSelectedItemChanged(Action<InventorySlot> listener)
+        {
+            OnSelectedSlotChanged += listener;
+            listener?.Invoke(selectedSlot);
+        }
+
+        public void UnsubscribeToOnSelectedItemChanged(Action<InventorySlot> listener)
+        {
+            OnSelectedSlotChanged -= listener;
         }
     }
 }

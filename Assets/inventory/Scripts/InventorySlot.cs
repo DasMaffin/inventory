@@ -17,7 +17,7 @@ namespace Maffin.InvetorySystem.Slots
             {
                 item = value;
                 if(item == null)
-                    ownedAmount = 0;
+                    OwnedAmount = 0;
             }
         }
         public uint OwnedAmount
@@ -47,7 +47,7 @@ namespace Maffin.InvetorySystem.Slots
         public InventorySlot(Item item, uint ownedAmount)
         {
             this.item = item;
-            this.ownedAmount = ownedAmount;
+            this.OwnedAmount = ownedAmount;
         }
     }
 }
