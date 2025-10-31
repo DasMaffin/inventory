@@ -127,7 +127,10 @@ namespace Maffin.InvetorySystem.Inventories
             else
             {
                 amount -= slot.OwnedAmount;
-                slot.Item = null;
+                if (!slot.KeepItem)
+                {
+                    slot.Item = null;
+                }
                 slot.OwnedAmount = 0;
                 OnInventoryChanged?.Invoke(slot);
                 return amount;

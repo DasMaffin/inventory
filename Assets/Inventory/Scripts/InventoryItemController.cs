@@ -1,23 +1,57 @@
 using Maffin.InvetorySystem.Inventories;
+using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
-public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
 {
     public TextMeshProUGUI AmountText;
-
+    private Item myItem; // If I ever need the slot just replace this with it as the slot knows the item.
+    public Item MyItem
+    {
+        get => myItem;
+        set
+        {
+            myItem = value;
+            MyImage.sprite = MyItem.Icon;
+        }
+    }
+    private bool isPlaceholder;
+    private bool IsPlaceholder
+    {
+        get => isPlaceholder;
+        set
+        {
+            isPlaceholder = value;
+            MyImage.color = new Color(1f, 1f, 1f, 0.25f);
+        }
+    }
     private RectTransform rectTransform;
     private Canvas rootCanvas;
     private RectTransform canvasRect;
     private Camera canvasCamera;
     private GraphicRaycaster raycaster;
     private InventoryControllerUI inventoryControllerUI;
+
+    private Image myImage;
+    private Image MyImage
+    {
+        get
+        {
+            if(myImage == null)
+            {
+                myImage = GetComponent<Image>();
+            }
+            return myImage;
+        }
+    }
 
     private Transform originalParent;
 
@@ -38,6 +72,18 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
         }
     }
 
+    private void Start()
+    {
+        if (IsPlaceholder)
+        {
+            transform.SetAsFirstSibling();
+        }
+        else
+        {
+            transform.SetAsLastSibling();
+        }
+    }
+
     public void SetAmount(uint amount)
     {
         if (AmountText != null)
@@ -46,21 +92,21 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (rootCanvas == null) return;
+        if (rootCanvas == null || 
+            eventData.button == PointerEventData.InputButton.Middle ||
+            inventoryControllerUI.GOToSlot[transform.parent.gameObject].OwnedAmount == 0) return;
 
         isDragged = true;
 
-        // Store original parent so we can return the item later
         originalParent = transform.parent;
 
-        // Reparent to canvas so the item is not affected by parent's anchors/pivots/LayoutGroups
-        transform.SetParent(rootCanvas.transform, true); // worldPositionStays = true, so visible position doesn't jump
+        transform.SetParent(rootCanvas.transform, true);
         transform.SetAsLastSibling();
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!isDragged) return;
+        if (!isDragged || eventData.button == PointerEventData.InputButton.Middle) return;
 
         isDragged = false;
 
@@ -126,5 +172,26 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
         }
 
         return null;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Middle)
+        {
+            InventorySlot slot = inventoryControllerUI.GOToSlot[transform.parent.gameObject];
+            slot.KeepItem = !slot.KeepItem;
+
+            if (!IsPlaceholder && slot.KeepItem)
+            {
+                slot.placeholder = Instantiate(InventoryControllerUI.Instance.InventoryItemPrefab, transform.parent.transform);
+                InventoryItemController iic = slot.placeholder.GetComponent<InventoryItemController>();
+                iic.MyItem = this.MyItem;
+                iic.IsPlaceholder = true;
+            }
+            else
+            {
+                Destroy(slot.placeholder.gameObject);
+            }
+        }
     }
 }

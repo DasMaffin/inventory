@@ -42,7 +42,7 @@ public class InventoryControllerUI : MonoBehaviour
         {
             SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, InventorySlotsArea.transform));
             GOToSlot.Add(SlotToGO[inventory.slots[i]], inventory.slots[i]);
-            if (inventory.slots[i].Item != null) 
+            if (inventory.slots[i].Item != null)
                 Inventory_OnInventoryChanged(inventory.slots[i]);
         }
     }
@@ -62,12 +62,21 @@ public class InventoryControllerUI : MonoBehaviour
 
     private void Inventory_OnInventoryChanged(InventorySlot slot)
     {
-        if(!InventoryItems.ContainsKey(slot) && slot.Item != null)
+        if (slot.Item != null)
         {
-            InventoryItems.Add(slot, Instantiate(InventoryItemPrefab, SlotToGO[slot].transform).GetComponent<InventoryItemController>());
-            InventoryItems[slot].GetComponent<Image>().sprite = slot.Item.Icon;
+            if (InventoryItems.ContainsKey(slot) && InventoryItems[slot] == null)
+            {
+                InventoryItems.Remove(slot);
+            }
+            if (!InventoryItems.ContainsKey(slot))
+            {
+                // Spawning
+                InventoryItems.Add(slot, Instantiate(InventoryItemPrefab, SlotToGO[slot].transform).GetComponent<InventoryItemController>());
+                InventoryItems[slot].MyItem = slot.Item;
+            }
         }
-        else if(slot.Item == null)
+
+        if (slot.OwnedAmount == 0)
         {
             Destroy(InventoryItems[slot].gameObject);
             InventoryItems.Remove(slot);

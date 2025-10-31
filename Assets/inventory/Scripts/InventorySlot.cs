@@ -1,4 +1,5 @@
 using Maffin.InvetorySystem.Items;
+using UnityEngine;
 
 namespace Maffin.InvetorySystem.Slots
 {
@@ -31,6 +32,17 @@ namespace Maffin.InvetorySystem.Slots
             }
         }
         public uint MaxAmount => item.StackSize;
+        public GameObject placeholder;
+
+        private bool keepItem = false;
+        public bool KeepItem
+        {
+            get => keepItem;
+            set
+            {
+                keepItem = value;
+            }
+        }
 
         public InventorySlot(Item item, uint ownedAmount)
         {
