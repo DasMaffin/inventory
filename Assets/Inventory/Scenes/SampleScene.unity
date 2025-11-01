@@ -498,6 +498,7 @@ GameObject:
   - component: {fileID: 906440349}
   - component: {fileID: 906440350}
   - component: {fileID: 906440352}
+  - component: {fileID: 906440353}
   - component: {fileID: 906440351}
   m_Layer: 5
   m_Name: InventoryHotbarBackground
@@ -538,15 +539,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 25
+    m_Right: 25
+    m_Top: 25
+    m_Bottom: 25
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 152, y: 152}
-  m_Spacing: {x: 10, y: 10}
+  m_Spacing: {x: 25, y: 25}
   m_Constraint: 1
   m_ConstraintCount: 10
 --- !u!114 &906440351
@@ -587,6 +588,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 906440348}
   m_CullTransparentMesh: 1
+--- !u!114 &906440353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906440348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf5d551ed6193224993f24e1defeee2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResponsiveGrid
+  columns: 10
+  rows: 1
+  usePercentages: 0
+  paddingPercent:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  spacingPercent: {x: 0, y: 0}
 --- !u!1 &997879896
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,6 +665,7 @@ GameObject:
   - component: {fileID: 1032283436}
   - component: {fileID: 1032283437}
   - component: {fileID: 1032283439}
+  - component: {fileID: 1032283440}
   - component: {fileID: 1032283438}
   m_Layer: 5
   m_Name: InventorySlotsBackground
@@ -683,15 +706,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
+    m_Left: 25
+    m_Right: 25
+    m_Top: 25
+    m_Bottom: 25
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 152, y: 152}
-  m_Spacing: {x: 10, y: 10}
+  m_Spacing: {x: 25, y: 25}
   m_Constraint: 1
   m_ConstraintCount: 10
 --- !u!114 &1032283438
@@ -732,6 +755,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1032283435}
   m_CullTransparentMesh: 1
+--- !u!114 &1032283440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1032283435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf5d551ed6193224993f24e1defeee2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResponsiveGrid
+  columns: 10
+  rows: 1
+  usePercentages: 1
+  paddingPercent:
+    m_Left: 2
+    m_Right: 2
+    m_Top: 2
+    m_Bottom: 2
+  spacingPercent: {x: 2, y: 2}
 --- !u!1 &1332085429
 GameObject:
   m_ObjectHideFlags: 0
@@ -1173,6 +1217,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 856a8d6e-adc9-4a0a-8056-4e4a020d5f6d
+    m_ActionName: 'Player/ScrollWheel[/Mouse/scroll]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
