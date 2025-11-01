@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(GridLayoutGroup))]
-public class ResponsiveGrid : MonoBehaviour
+public class ResponsiveGridLayoutGroup : MonoBehaviour
 {
     public int columns = 10;
     public int rows = 4;

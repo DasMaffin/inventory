@@ -5,7 +5,7 @@ using UnityEditor.AnimatedValues;
 
 namespace UnityEditor.UI
 {
-    [CustomEditor(typeof(ResponsiveGrid), true)]
+    [CustomEditor(typeof(ResponsiveGridLayoutGroup), true)]
     [CanEditMultipleObjects]
     /// <summary>
     /// Custom Editor for the GridLayout Component.
@@ -30,7 +30,7 @@ namespace UnityEditor.UI
 
         public override void OnInspectorGUI()
         {
-            ResponsiveGrid controller = (ResponsiveGrid)target;
+            ResponsiveGridLayoutGroup controller = (ResponsiveGridLayoutGroup)target;
             GridLayoutGroup gridLayout = controller.GetComponent<GridLayoutGroup>();
 
             serializedObject.Update();

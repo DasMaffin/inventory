@@ -597,18 +597,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 906440348}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf5d551ed6193224993f24e1defeee2f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bd3632e2300133488a59ad4469e8b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResponsiveGrid
   columns: 10
-  rows: 1
-  usePercentages: 0
+  rows: 4
+  usePercentages: 1
   paddingPercent:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  spacingPercent: {x: 0, y: 0}
+    m_Left: 2
+    m_Right: 2
+    m_Top: 2
+    m_Bottom: 2
+  spacingPercent: {x: 2, y: 2}
 --- !u!1 &997879896
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,11 +764,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032283435}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf5d551ed6193224993f24e1defeee2f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bd3632e2300133488a59ad4469e8b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResponsiveGrid
   columns: 10
-  rows: 1
+  rows: 4
   usePercentages: 1
   paddingPercent:
     m_Left: 2

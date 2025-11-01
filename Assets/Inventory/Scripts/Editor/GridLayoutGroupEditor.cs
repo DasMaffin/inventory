@@ -37,7 +37,7 @@ namespace UnityEditor.UI
         public override void OnInspectorGUI()
         {
             GridLayoutGroup controller = (GridLayoutGroup)target;
-            ResponsiveGrid rg = controller.GetComponent<ResponsiveGrid>();
+            ResponsiveGridLayoutGroup rg = controller.GetComponent<ResponsiveGridLayoutGroup>();
             bool isResponsive = rg != null;
 
             serializedObject.Update();
