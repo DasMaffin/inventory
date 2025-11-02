@@ -9,46 +9,64 @@ public class InventoryControllerUI : MonoBehaviour
     public GameObject InventoryItemPrefab;
     public GameObject InventorySlotsArea;
     public GameObject InventoryHotbarArea;
+    public GameObject ItemInfoArea;
     public Inventory inventory;
     public Dictionary<InventorySlot, GameObject> SlotToGO = new Dictionary<InventorySlot, GameObject>();
     public Dictionary<GameObject, InventorySlot> GOToSlot = new Dictionary<GameObject, InventorySlot>();
 
     private Dictionary<InventorySlot, InventoryItemController> InventoryItems = new Dictionary<InventorySlot, InventoryItemController>();
 
+    private bool isInitialized = false;
     public void OpenInventory(Inventory _inventory)
     {
-        inventory = _inventory;
         InventorySlotsArea.SetActive(true);
-        _inventory.OnInventoryChanged += Inventory_OnInventoryChanged;
-
-        for (int i = 0; i < inventory.slots.Length; i++)
+        ItemInfoArea.SetActive(true);
+        if (!isInitialized)
         {
-            Transform area;
-            if (inventory.isLocalPlayerInventory && i < 10)
-                area = InventoryHotbarArea.transform;
-            else 
-                area = InventorySlotsArea.transform;
+            inventory = _inventory;
+            
+            _inventory.OnInventoryChanged += Inventory_OnInventoryChanged;
 
-            SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, area));
-            GOToSlot.Add(SlotToGO[inventory.slots[i]], inventory.slots[i]);
-            SlotToGO[inventory.slots[i]].GetComponent<InventorySlotController>().myInventory = this;
-            if (inventory.slots[i].Item != null)
-                Inventory_OnInventoryChanged(inventory.slots[i]);
+            for (int i = 0; i < inventory.slots.Length; i++)
+            {
+                Transform area;
+                if (inventory.isLocalPlayerInventory && i < 10)
+                    area = InventoryHotbarArea.transform;
+                else
+                    area = InventorySlotsArea.transform;
+
+                SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, area));
+                GOToSlot.Add(SlotToGO[inventory.slots[i]], inventory.slots[i]);
+                SlotToGO[inventory.slots[i]].GetComponent<InventorySlotController>().myInventory = this;
+                if (inventory.slots[i].Item != null)
+                    Inventory_OnInventoryChanged(inventory.slots[i]);
+            }
+            isInitialized = true;
         }
     }
 
     public void CloseInventory()
     {
-        if (!InventorySlotsArea.activeSelf) return;
         InventorySlotsArea.SetActive(false);
-        inventory.OnInventoryChanged -= Inventory_OnInventoryChanged;
-        for (int i = 0; i < SlotToGO.Count; i++)
-        {
-            Destroy(SlotToGO[inventory.slots[i]]);
-        }
-        SlotToGO.Clear();
-        GOToSlot.Clear();
-        InventoryItems.Clear();
+        ItemInfoArea.SetActive(false);
+
+        ///
+        /// This is the old code for opening/closing. I was convinced I still needed it for chest opening/closing as I thought I just regenerate them instead of caching them. 
+        /// I changed it to caching for the player inventory, as it needs to always be active for the hotbar. Somehow it works PERFECT with chests as well.
+        /// Keeping this code in case something does break so I remember what it used to be.
+        ///
+
+        //if (!InventorySlotsArea.activeSelf) return;
+        //InventorySlotsArea.SetActive(false);
+        //ItemInfoArea.SetActive(false);
+        //inventory.OnInventoryChanged -= Inventory_OnInventoryChanged;
+        //for (int i = 0; i < SlotToGO.Count; i++)
+        //{
+        //    Destroy(SlotToGO[inventory.slots[i]]);
+        //}
+        //SlotToGO.Clear();
+        //GOToSlot.Clear();
+        //InventoryItems.Clear();
     }
 
     private void Inventory_OnInventoryChanged(InventorySlot slot)

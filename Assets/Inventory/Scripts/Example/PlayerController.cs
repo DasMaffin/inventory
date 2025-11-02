@@ -33,6 +33,8 @@ public class PlayerController: MonoBehaviour
         PlayerInput.actions["ScrollWheel"].performed += OnScrollWheel;
 
         PlayerInventory.SubscribeToOnSelectedItemChanged(OnSelectedItemChanged);
+        InventoryUI.OpenInventory(PlayerInventory);
+        InventoryUI.CloseInventory();
     }
 
     private void OnSelectedItemChanged(InventorySlot slot)
