@@ -60,7 +60,7 @@ public class CommandManager : MonoBehaviour
                 return;
             }
             GameObject owner = Instantiate(ChestPrefab, ChestList);
-            OnChestClick chest = owner.GetComponent<OnChestClick>();
+            ChestController chest = owner.GetComponent<ChestController>();
             chest.Inventory = InventoryBuilder.Create()
             .SetCapacity(slots)
             .Build();

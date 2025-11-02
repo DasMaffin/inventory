@@ -2,8 +2,6 @@ using Maffin.InvetorySystem.Builders;
 using Maffin.InvetorySystem.Inventories;
 using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

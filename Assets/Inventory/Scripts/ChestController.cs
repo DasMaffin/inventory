@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class OnChestClick : MonoBehaviour, IPointerClickHandler
+public class ChestController : MonoBehaviour, IPointerClickHandler
 {
     public TextMeshProUGUI text;
     [HideInInspector] public Inventory Inventory;
@@ -18,7 +18,7 @@ public class OnChestClick : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private static List<OnChestClick> allChests = new List<OnChestClick>();
+    private static List<ChestController> allChests = new List<ChestController>();
 
     private void Start()
     {
