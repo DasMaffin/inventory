@@ -3,23 +3,29 @@ using Maffin.InvetorySystem.Inventories;
 using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController: MonoBehaviour
 {
-    public Inventory PlayerInventory;
+    [HideInInspector] public Inventory PlayerInventory;
+    [HideInInspector] public InventoryControllerUI InventoryUI;
 
     [SerializeField] private PlayerInput PlayerInput;
+    [SerializeField] private GameObject InventoryPrefab;
+    [SerializeField] private GameObject InventoryCanvas;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         Inventory.SetItemsPath("Examples/");
         PlayerInventory = InventoryBuilder.Create()
             .SetOwner(this.gameObject)
-            .SetCapacity(20)
+            .SetCapacity(40)
             .SetLocalPlayer()
             .Build();
+
+        InventoryUI = Instantiate(InventoryPrefab, InventoryCanvas.transform).GetComponent<InventoryControllerUI>();
     }
 
     private void OnEnable()
@@ -49,11 +55,11 @@ public class PlayerController: MonoBehaviour
 
         if (inventoryOpen)
         {
-            InventoryControllerUI.Instance.CloseInventory();
+            InventoryUI.CloseInventory();
         }
         else
         {
-            InventoryControllerUI.Instance.OpenInventory(PlayerInventory);
+            InventoryUI.OpenInventory(PlayerInventory);
         }
 
         inventoryOpen = !inventoryOpen;

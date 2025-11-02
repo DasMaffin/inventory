@@ -1,23 +1,10 @@
 using Maffin.InvetorySystem.Inventories;
 using Maffin.InvetorySystem.Slots;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class InventoryControllerUI : MonoBehaviour
 {
-    private static InventoryControllerUI instance;
-    public static InventoryControllerUI Instance
-    {
-        get => instance;
-        set
-        {
-            instance = value;
-        }
-    }
-
     public GameObject InventorySlotPrefab;
     public GameObject InventoryItemPrefab;
     public GameObject InventorySlotsArea;
@@ -28,11 +15,6 @@ public class InventoryControllerUI : MonoBehaviour
 
     private Dictionary<InventorySlot, InventoryItemController> InventoryItems = new Dictionary<InventorySlot, InventoryItemController>();
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
     public void OpenInventory(Inventory _inventory)
     {
         inventory = _inventory;
@@ -41,8 +23,15 @@ public class InventoryControllerUI : MonoBehaviour
 
         for (int i = 0; i < inventory.slots.Length; i++)
         {
-            SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, i < 10 ? InventoryHotbarArea.transform : InventorySlotsArea.transform));
+            Transform area;
+            if (inventory.isLocalPlayerInventory && i < 10)
+                area = InventoryHotbarArea.transform;
+            else 
+                area = InventorySlotsArea.transform;
+
+            SlotToGO.Add(inventory.slots[i], Instantiate(InventorySlotPrefab, area));
             GOToSlot.Add(SlotToGO[inventory.slots[i]], inventory.slots[i]);
+            SlotToGO[inventory.slots[i]].GetComponent<InventorySlotController>().myInventory = this;
             if (inventory.slots[i].Item != null)
                 Inventory_OnInventoryChanged(inventory.slots[i]);
         }
@@ -50,6 +39,7 @@ public class InventoryControllerUI : MonoBehaviour
 
     public void CloseInventory()
     {
+        if (!InventorySlotsArea.activeSelf) return;
         InventorySlotsArea.SetActive(false);
         inventory.OnInventoryChanged -= Inventory_OnInventoryChanged;
         for (int i = 0; i < SlotToGO.Count; i++)
@@ -72,7 +62,8 @@ public class InventoryControllerUI : MonoBehaviour
             if (!InventoryItems.ContainsKey(slot))
             {
                 // Spawning
-                InventoryItems.Add(slot, Instantiate(InventoryItemPrefab, SlotToGO[slot].transform).GetComponent<InventoryItemController>());
+                InventoryItemController iic = Instantiate(InventoryItemPrefab, SlotToGO[slot].transform).GetComponent<InventoryItemController>();
+                InventoryItems.Add(slot, iic);
                 InventoryItems[slot].MyItem = slot.Item;
             }
         }

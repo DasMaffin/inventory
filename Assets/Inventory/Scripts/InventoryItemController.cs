@@ -1,9 +1,7 @@
-using Maffin.InvetorySystem.Inventories;
 using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -38,7 +36,7 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
     private RectTransform canvasRect;
     private Camera canvasCamera;
     private GraphicRaycaster raycaster;
-    private InventoryControllerUI inventoryControllerUI;
+    private InventoryControllerUI myInventoryUI;
 
     private Image myImage;
     private Image MyImage
@@ -60,7 +58,7 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        inventoryControllerUI = GetComponentInParent<InventoryControllerUI>();
+        myInventoryUI = GetComponentInParent<InventoryControllerUI>();
         rootCanvas = GetComponentInParent<Canvas>();
         if (rootCanvas == null)
             Debug.LogError("InventoryItemController must be a child of a Canvas.");
@@ -94,7 +92,7 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
     {
         if (rootCanvas == null || 
             eventData.button == PointerEventData.InputButton.Middle ||
-            inventoryControllerUI.GOToSlot[transform.parent.gameObject].OwnedAmount == 0) return;
+            myInventoryUI.GOToSlot[transform.parent.gameObject].OwnedAmount == 0) return;
 
         isDragged = true;
 
@@ -114,10 +112,12 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
         GameObject hoveredSlotGO = GetUIUnderMouseWithTag("InventorySlot");
         if (hoveredSlotGO != null && hoveredSlotGO.transform != originalParent)
         {
-            InventorySlot hoveredSlot = inventoryControllerUI.GOToSlot[hoveredSlotGO];
-            InventorySlot originalSlot = inventoryControllerUI.GOToSlot[originalParent.gameObject];
-            uint ret = inventoryControllerUI.inventory.AddItem(hoveredSlot, originalSlot.Item, originalSlot.OwnedAmount);
-            inventoryControllerUI.inventory.RemoveItem(originalSlot, originalSlot.MaxAmount - ret);
+            InventoryControllerUI newInventory = hoveredSlotGO.GetComponentInParent<InventoryControllerUI>();
+            InventorySlot hoveredSlot = newInventory.GOToSlot[hoveredSlotGO];
+            InventorySlot originalSlot = myInventoryUI.GOToSlot[originalParent.gameObject];
+            uint ret = newInventory.inventory.AddItem(hoveredSlot, originalSlot.Item, originalSlot.OwnedAmount);
+            myInventoryUI.inventory.RemoveItem(originalSlot, originalSlot.MaxAmount - ret);
+            myInventoryUI = newInventory;
             if (ret != 0) resetToOriginal();
         }
         else
@@ -178,12 +178,12 @@ public class InventoryItemController : MonoBehaviour, IPointerDownHandler, IPoin
     {
         if (eventData.button == PointerEventData.InputButton.Middle)
         {
-            InventorySlot slot = inventoryControllerUI.GOToSlot[transform.parent.gameObject];
+            InventorySlot slot = myInventoryUI.GOToSlot[transform.parent.gameObject];
             slot.KeepItem = !slot.KeepItem;
 
             if (!IsPlaceholder && slot.KeepItem)
             {
-                slot.placeholder = Instantiate(InventoryControllerUI.Instance.InventoryItemPrefab, transform.parent.transform);
+                slot.placeholder = Instantiate(myInventoryUI.InventoryItemPrefab, transform.parent.transform);
                 InventoryItemController iic = slot.placeholder.GetComponent<InventoryItemController>();
                 iic.MyItem = this.MyItem;
                 iic.IsPlaceholder = true;

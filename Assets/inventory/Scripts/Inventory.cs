@@ -1,12 +1,9 @@
-using Codice.Client.BaseCommands.WkStatus.Printers;
 using Maffin.InvetorySystem.Interfaces;
 using Maffin.InvetorySystem.Items;
 using Maffin.InvetorySystem.Slots;
-using PlasticPipe.PlasticProtocol.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace Maffin.InvetorySystem.Inventories
@@ -23,7 +20,7 @@ namespace Maffin.InvetorySystem.Inventories
             canOpen = true,
             isLocalPlayerInventory = false;
         public InventorySlot[]
-            slots;    // The slots in the inventory.
+            slots;
         private InventorySlot _selectedSlot;
         private InventorySlot selectedSlot
         {
@@ -67,7 +64,10 @@ namespace Maffin.InvetorySystem.Inventories
             this.canOpen = canOpen;
             this.slots = slots;
             this.isLocalPlayerInventory = _isLocalPlayerInventory;
-            this.selectedSlot = this.slots[0];
+            if(this.isLocalPlayerInventory)
+                this.selectedSlot = this.slots[0];
+            else
+                this.selectedSlot = null;
         }
 
         public uint AddItem(Item item, uint amount)
@@ -167,6 +167,7 @@ namespace Maffin.InvetorySystem.Inventories
 
         public InventorySlot HotbarChangeSelect(int value)
         {
+            if (value == 0) return null;
             int newValue = hotbarSelectedIndex - value;
             while (newValue < 0) newValue = 10 + newValue;
             while (newValue > 9) newValue = newValue % 10;

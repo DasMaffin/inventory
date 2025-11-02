@@ -15,4 +15,4 @@ MonoBehaviour:
   itemName: '#1'
   description: A generic item.
   StackSize: 10
-  Icon: {fileID: 21300000, guid: 0402b84d2a7affa45a4cb92fc858a31f, type: 3}
+  Icon: {fileID: 21300000, guid: c36fa9ab8c23f104aa251db61db2f1b8, type: 3}
